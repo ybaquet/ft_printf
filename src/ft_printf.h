@@ -25,15 +25,16 @@
 
 typedef struct	s_attr
 {
-	int	precis;
-	int	width;
-	int	left;
+	int		precis;
+	int		width;
+	int		left;
+	int		len;
+	char	*var;
 }				t_attr;
 
 typedef struct	s_arg
 {
-	void			*var[3];
-	int				nb_arg;
+	void			*var;
 	t_attr			*attr;
 	char			conv;
 	char			*str;

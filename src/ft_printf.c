@@ -31,19 +31,15 @@ int print(t_arg *farg, int status)
 	warg = farg;
 	while (warg)
 	{
-		if (warg->attr && !warg->attr->left)
-		{
-			repet(' ', warg->attr->width - warg->attr->precis);
-			repet('0', warg->attr->precis);
-		}
 		ft_putstr(warg->str);
+		if (warg->attr &&  warg->attr->width >  warg->attr->precis)
+			repet('0', warg->attr->precis);
+		if (warg->attr && !warg->attr->left)
+			repet(' ', warg->attr->width - warg->attr->precis);
 		if (warg->print)
 			warg->print(warg);
 		if (warg->attr && warg->attr->left)
-		{
-			repet('0', warg->attr->precis);
 			repet(' ', warg->attr->width - warg->attr->precis);
-		}
 		warg = warg->next;
 	}
 	return (free_all(farg, status));

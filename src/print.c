@@ -3,32 +3,32 @@
 
 void print_c (t_arg *arg)
 {
-	ft_putchar((char)arg->var[0]);
+	ft_putchar((char)arg->var);
 }
 
 void print_s (t_arg *arg)
 {
-	ft_putstr((char *)arg->var[0]);
+	ft_putstr((char *)arg->var);
 }
 
 void print_d (t_arg *arg)
 {
-	ft_putnbr((int)arg->var[0]);
+	ft_putnbr((int)arg->var);
 }
 
 void print_u (t_arg *arg)
 {
-	ft_putnbr((unsigned int)arg->var[0]);
+	ft_putnbr((unsigned int)arg->var);
 }
 
 void print_p (t_arg *arg)
 {
-	ft_putnbr((unsigned int)arg->var[0]);
+	ft_putnbr((unsigned int)arg->var);
 }
 
 void print_x (t_arg *arg)
 {
-	ft_putnbr((unsigned int)arg->var[0]);
+	ft_putnbr((unsigned int)arg->var);
 }
 
 void set_print(t_arg *arg)
@@ -49,7 +49,6 @@ void set_print(t_arg *arg)
 		arg->print = NULL;
 	else
 	{
-		arg->var[arg->nb_arg - 1] = "%";
 		arg->print = &print_s;
 	}
 }

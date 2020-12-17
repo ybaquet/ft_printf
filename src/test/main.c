@@ -37,7 +37,8 @@ foo2(char *fmt, ...)
 
 int main(void)
 {
-	ft_printf("<Nb: %*d, Hello:%sFIN>\n", 10, 1, "Coucou");
+	ft_printf("<Nb: %-*.*d, nb2=%*d, Hello:%sFIN>\n", 20, 10, 500, 10, 1, "Coucou");
+	printf   ("<Nb: %-*.*d, nb2=%*d, Hello:%sFIN>\n", 20, 10, 500, 10, 1, "Coucou");
 	printf("---------------------------------------");
 	return (0);
 }

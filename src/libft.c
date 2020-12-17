@@ -55,7 +55,7 @@ int		index_of(char *s, char c)
 	i = 0;
 	while (*s)
 	{
-		if (*s == c)
+		if (*s++ == c)
 			return (i);
 		i++;
 	}
