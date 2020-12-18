@@ -10,7 +10,7 @@ int free_all(t_arg *farg, int status)
 	warg = farg;
 	while (warg)
 	{
-		free(warg->attr);
+		free(warg->wvar);
 		free(warg->str);
 		free(warg);
 		warg = warg->next;
@@ -26,20 +26,26 @@ void repet(char c, int nb)
 
 int print(t_arg *farg, int status)
 {
-	t_arg *warg;
+	t_arg	*warg;
+	int 	len;
+	char	*var;
+	int		precis;
 
 	warg = farg;
 	while (warg)
 	{
+		var = (warg->wvar) ? warg->wvar : warg->var;
+		precis = warg->precis - ft_strlen(var);
+		len = warg->length  - warg->precis;
 		ft_putstr(warg->str);
-		if (warg->attr &&  warg->attr->width >  warg->attr->precis)
-			repet('0', warg->attr->precis);
-		if (warg->attr && !warg->attr->left)
-			repet(' ', warg->attr->width - warg->attr->precis);
-		if (warg->print)
-			warg->print(warg);
-		if (warg->attr && warg->attr->left)
-			repet(' ', warg->attr->width - warg->attr->precis);
+		if (!warg->left)
+			repet('#', len);
+		if (warg->sign)
+			ft_putchar('-');
+		repet('0', precis);
+		ft_putstr(var);
+		if (warg->left)
+			repet('$', len);
 		warg = warg->next;
 	}
 	return (free_all(farg, status));

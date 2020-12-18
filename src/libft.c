@@ -23,15 +23,6 @@ int		ft_atoi(const char *str)
 	return (result * sign);
 }
 
-int		ft_isdigit(int i)
-{
-	if ((i >= '0' && i <= '9'))
-		return (1);
-	if (i == '-' || i == '+' || i == '.')
-		return (1);
-	return (0);
-}
-
 char	*ft_substr(const char *s, int start, int len)
 {
 	char	*pt;
@@ -66,18 +57,10 @@ int		ft_strlen(char *s)
 {
 	int i;
 
+	if (!s)
+		return (0);
 	i = 0;
 	while (*s++)
 		i++;
 	return (i);
-}
-
-int		ft_strcmp(const char *s1, const char *s2)
-{
-	int		i;
-
-	i = 0;
-	while (s1[i] && s2[i] && s1[i] == s2[i])
-		i++;
-	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
