@@ -1,5 +1,5 @@
 #include <unistd.h>
-#include "ft_printf.h"
+#include "../ft_printf.h"
 
 void	ft_putchar(char c)
 {
@@ -72,5 +72,40 @@ void	ft_lstadd_back(t_arg **alst, t_arg *new)
 		}
 		else
 			*alst = new;
+	}
+}
+
+void *malloc_(size_t l)
+{
+	globalMalloc += l ;
+	trace("Malloc %lu\n", l);
+	return malloc(l);
+}
+
+void free_s(char *s)
+{
+	int len;
+
+	len = (NULL == s) ? 0 : ft_strlen(s) + 1;
+	globalFree += len;
+	trace("Free S %d\n", len);
+}
+
+void free_arg(t_arg *arg)
+{
+	int len;
+
+	len = (NULL == arg) ? 0 : sizeof(t_arg);
+	globalFree += len;
+	trace("Free ARG %d\n", len);
+}
+
+#include <stdio.h>
+void trace(char *fmt, int i)
+{
+	int ok = 0;
+	if (ok) {
+		printf(fmt, i);
+		fflush(stdout);
 	}
 }

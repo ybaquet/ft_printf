@@ -28,12 +28,15 @@
 
 typedef struct	s_arg
 {
-	char			*var;
 	char			*wvar;
 	char			conv;
 	char			*str;
 	int				precis;
 	int				length;
+	char			white_char;
+	char			*format;
+	int				white_nb;
+	int				zero;
 	int				left;
 	int				sign;
 	struct s_arg	*next;
@@ -41,12 +44,11 @@ typedef struct	s_arg
 
 int				ft_printf(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
 int				add_arg(t_arg **argfirst, const char *fmt, int *start, int pos, va_list ap);
-void			set_print(t_arg *arg);
 char			*ft_substr(const char *s, int start, int len);
 void			ft_putchar(char c);
 void			ft_putstr(char *str);
-void			ft_putnbr(int nb);
-int				ft_atoi(const char *str);
+void			ft_putnbr(int);
+int				ft_atoi(const char *);
 int				index_of(char *s, char c);
 int				ft_strlen(char *s);
 void			ft_lstadd_back(t_arg **arg_list, t_arg *new_arg);
@@ -54,5 +56,15 @@ void			malloc_c(t_arg *arg, char c);
 char			*get_abs_base(t_arg *arg, va_list ap);
 char			*get_addon_base(long nb, int base, const char *str_base, char *addon);
 char			*get_base(long nb, int base, const char *str_base, int addonlen);
+char			*arg_strncpy(t_arg *arg, char *str, int n);
+// A supprimer
+void	*malloc_(size_t);
+void	free_s(char *);
+void	free_arg(t_arg *);
+void trace(char *fmt, int i);
+
+// A supprimer
+extern int globalMalloc;
+extern int globalFree;
 
 #endif

@@ -1,4 +1,4 @@
-#include "ft_printf.h"
+#include "../ft_printf.h"
 
 int		ft_atoi(const char *str)
 {
@@ -16,10 +16,8 @@ int		ft_atoi(const char *str)
 			sign = -1;
 		str++;
 	}
-	while (ft_isdigit(*str))
-	{
+	while (*str >= '0' && *str <= '9')
 		result = result * 10 + *str++ - 48;
-	}
 	return (result * sign);
 }
 
@@ -29,7 +27,7 @@ char	*ft_substr(const char *s, int start, int len)
 	int		i;
 
 	i = 0;
-	if (!(pt = malloc(len * sizeof(char) + 1)))
+	if (!(pt = malloc_((len + 1) * sizeof(char))))
 		return (NULL);
 	while (start--)
 		s++;
