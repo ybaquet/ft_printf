@@ -15,7 +15,7 @@ char	*arg_strncpy(t_arg *arg, char *str, int n)
 	while ((pt[l] = *str++) && n--)
 		l++;
 	pt[l] = 0;
-	arg->white_nb = arg->length - l;
+	arg->white = arg->length - l;
 	return (pt);
 }
 
@@ -57,24 +57,25 @@ char		*get_addon_base(long nb, int base, const char *str_base, char *addon)
 	return (value);
 }
 
-char		*get_abs_base(t_arg *arg, va_list ap)
+char		*get_abs_base(t_arg *a, va_list ap)
 {
 	int		nb;
 	char	*value;
+//	int		zero;
 
+//	zero = (NULL != a->fmt && '0' == *(a->fmt) && -1 == a->precis) ? 1 : 0;
 	nb = va_arg(ap, int);
-	if (NULL != arg->format && '0' == *(arg->format) && -1 == arg->precis)
-		arg->white_char = '0';
 	if (0 > nb)
 	{
-		arg->sign = 1;
-		arg->length -= 1;
+		a->sign = 1;
+		a->length -= 1;
 		nb = -nb;
 	}
 	value = get_base(nb, 10, B10, 0);
-	arg->precis = (0 > arg->precis) ? 0 : arg->precis - ft_strlen(value);
-	arg->white_nb = arg->length - arg->precis - ft_strlen(value);
-	arg->zero = arg->precis;
+	a->precis = (ft_strlen(value) > a->precis) ? 0 : a->precis - ft_strlen(value);
+	a->white = a->length - a->precis - ft_strlen(value);
+	a->zero = (a->haszero) ? a->white : a->precis;
+	a->white = (a->haszero) ? 0 : a->white;
 	return (value);
 }
 
