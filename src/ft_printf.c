@@ -4,49 +4,35 @@ int globalMalloc = 0;
 int globalFree = 0;
 
 
-int free_all(t_arg *farg, int status)
-{
-	t_arg *warg;
-
-	warg = farg;
-	while (warg)
-	{
-		free_s(warg->wvar);
-		free_s(warg->str);
-		free_s(warg->format);
-		free_arg(warg);
-		warg = warg->next;
-	}
-	trace("\nMalloc:%d", globalMalloc);
-	trace("\t\tfree:%d\n", globalFree);
-	return (status);
-}
-
-void repet(char c, int nb, int flag)
-{
-	if (flag)
-		while (nb-- > 0)
-			ft_putchar(c);
-}
-
 int print_args(t_arg *farg, int status)
 {
 	t_arg	*warg;
+	t_arg	*parg;
 
 	warg = farg;
 	while (warg)
 	{
-//		white = warg->length  - warg->precis - ft_strlen(warg->wvar);
+		parg = warg;
 		ft_putstr(warg->str);
-		repet(warg->white_char, warg->white_nb, !warg->left);
+		while ((warg->before)-- > 0)
+			ft_putchar(' ');
 		if (warg->sign)
-			ft_putchar('-');
-		repet('0', warg->zero, 1);
+			ft_putchar((-1 == warg->sign) ? '-' : '+');
+		ft_putstr(warg->addon);
+		while ((warg->zero_nb)-- > 0)
+			ft_putchar('0');
 		ft_putstr(warg->wvar);
-		repet(warg->white_char, warg->white_nb, warg->left);
+		if ('c' == warg->conv && warg->wvar && !*(warg->wvar))
+			write(1, warg->wvar, 1);
+		while ((warg->after)-- > 0)
+			ft_putchar(' ');
 		warg = warg->next;
+		free_s(parg->wvar);
+		free_s(parg->str);
+		free_s(parg->fmt);
+		free_arg(parg);
 	}
-	return (free_all(farg, status));
+	return (status);
 }
 
 int ft_printf(const char *fmt, ...)

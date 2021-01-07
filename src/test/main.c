@@ -32,6 +32,23 @@ void iprint(char *fmt, int i)
 	   printf("\n");
 }
 
+void pprint(char *fmt, void *p)
+{
+	   printf(fmt, p);
+	   printf("\n");
+	   fflush(stdout);
+	ft_printf(fmt, p);
+	   printf("\n");
+}
+
+void xprint(char *fmt, long u)
+{
+	   printf(fmt, u);
+	   printf("\n");
+	   fflush(stdout);
+	ft_printf(fmt, u);
+	   printf("\n");
+}
 
 void iprint2(char *fmt, int i1, int i2)
 {
@@ -44,7 +61,40 @@ void iprint2(char *fmt, int i1, int i2)
 
 int main(void)
 {
-//	int i = 0xFFFFFFFF;
+
+	xprint("%x", 4294u);
+	xprint("%x", 4294967294u);
+//	   printf("<%05%>\n");
+//	ft_printf("<%05%>\n");
+//	   printf("<%5c>\n", 52);
+//	ft_printf("<%5c>\n", 52);
+//	   printf("<%0-5%>\n");
+//	ft_printf("<%0-5%>\n");
+//	   printf("hello, %s.\n", "gavin");
+//	ft_printf("hello, %s.\n", "gavin");
+//	   printf("<%-05%>\n");
+//	ft_printf("<%-05%>\n");
+//	   printf("<%p>\n", NULL);
+//	ft_printf("<%p>\n", NULL);
+//	   printf("<%X>\n", 0);
+//	ft_printf("<%X>\n", 0);
+//	   printf("<%d>\n", 0);
+//	ft_printf("<%d>\n", 0);
+
+//	for(int i=0;i<1000;i++)
+//		ft_printf("%s%s", "hello", "world");
+
+//	int n = 254;
+//	printf ("%010X hexadecimal with upper case letters.\n", n);
+//	printf ("%x hexadecimal with lower case letters.\n", n);
+//	char *pt = "une chaine";
+//	pprint("<%020p>", pt);
+//	pprint("<%-020p>", pt);
+//	iprint("<%020d>", 10);
+//	iprint("<%-020d>", 10);
+//	ft_printf("%10%");
+
+	//	int i = 0xFFFFFFFF;
 //	int j = 24;
 //
 //	printf("x:%x.\n", -1);
@@ -66,14 +116,48 @@ int main(void)
 //	   printf(" *%-*.*d* *%*.*d* \n", 4, 5, 10, 30, 21, -18);
 //	   printf(" *%-*.*d* *%*.*d* \n", 4, 5, 10, 10, 21, -18);
 //	ft_printf(" *%-*.*d* *%*.*d* \n", 4, 5, 10, 10, 21, -18);
+//	iprint("%.0d", 0);
+//	iprint("%.0d", 0);
+//	iprint("%0++8.3i", 8375);
+//	iprint("%0+8.3i", -8375);
+//	iprint("%0+8.5i", 8375);
+//	iprint("%0+8.5i", -8375);
+//	iprint("<%010d>", 2563);
+//	iprint("<%010d>", -2563);
+//	iprint("<%-10.8d>", -2550);
+//	iprint("<%10.8d>", -2551);
+//	iprint("<%5.8d>", -2552);
+//	iprint("<%0-8.5d>", 34);
+//	iprint("<%0-8.5d>", -34);
+//	iprint("<%-8.5d>", 34);
+//	iprint("<%-8.5d>", -34);
+//	iprint("<%-5d>", -2561);
+//	iprint("<%-10.8d>", -2562);
+//	iprint("<%010d>", -2563);
+//	iprint("<%010d>", 2564);
+//	iprint("<%10d>", 2565);
+//	iprint("<%15d>", -2566);
+//	iprint("<%-15d>", -2567);
 
-	iprint("%05.1d", 43);
-	iprint("%05d", 43);
-	iprint("this %d number", 17);
-	iprint2(" %-3.2d %10.42d ", 1, -1);
-	iprint("%10.6d ", 10);
-	iprint2(" %-3.2d %10.42d ", 10, -10);
-	iprint("%.d", 1);
+
+	//	ft_printf("%-5d", -2562);
+//	ft_printf("%-5d", -2562);
+//	ft_printf("%-5d", -2562);
+//	ft_printf("%-5d", -2562);
+//	ft_printf("%-5d", -2562);
+//	ft_printf("%-5d", -2562);
+//	iprint("%-5d", -2562);
+//	iprint("%07d", -54);
+//	iprint("%05.1d", 43);
+//	iprint("%05d", 43);
+//	iprint("this %d number", 17);
+//	iprint2(" %-3.2d %10.42d ", 1, -1);
+//	iprint("%10.6d ", 10);
+//	iprint2(" %-3.2d %10.42d ", 10, -10);
+//	iprint("%.d", 1);
+
+
+
 //	   printf(" <%s>\n", "");
 
 //	ft_printf(" <%s>\n", "");
@@ -109,11 +193,12 @@ int main(void)
 //	sprint("<%.s>", "hello");
 //	sprint("<%.s>", "hello");
 //
-	sprint2("%.5s%7s", "yo", "boi");
-	sprint("%32s", "abc");
-	sprint("%7.5s", "yolo");
-	sprint("%s", NULL);
-	sprint("%7.5s", NULL);
+
+	//	sprint2("%.5s%7s", "yo", "boi");
+//	sprint("%32s", "abc");
+//	sprint("%-7.3s", "yolo");
+//	sprint("%s", NULL);
+//	sprint("%7.5s", NULL);
 
 	//	   printf(" *%-*.*d* *%*.*d* ", 6, 2, 102, 10, 21, -101);
 //	ft_printf(" *%-*.*d* *%*.*d* ", 6, 2, 102, 10, 21, -101);

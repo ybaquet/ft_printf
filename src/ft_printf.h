@@ -16,6 +16,7 @@
 
 # include <stdarg.h>
 # include <stdlib.h>
+# include <unistd.h>
 
 # define OK 1
 # define SUCCESS 0
@@ -29,15 +30,17 @@
 typedef struct	s_arg
 {
 	char			*wvar;
+	char			*addon;
 	char			conv;
 	char			*str;
 	int				precis;
 	int				length;
-	char			white_char;
-	char			*format;
-	int				white_nb;
-	int				zero;
+	char			*fmt;
+	int				haszero;
+	int				zero_nb;
 	int				left;
+	int 			before;
+	int				after;
 	int				sign;
 	struct s_arg	*next;
 }				t_arg;
@@ -52,15 +55,14 @@ int				ft_atoi(const char *);
 int				index_of(char *s, char c);
 int				ft_strlen(char *s);
 void			ft_lstadd_back(t_arg **arg_list, t_arg *new_arg);
-void			malloc_c(t_arg *arg, char c);
-char			*get_abs_base(t_arg *arg, va_list ap);
-char			*get_addon_base(long nb, int base, const char *str_base, char *addon);
-char			*get_base(long nb, int base, const char *str_base, int addonlen);
+char			*malloc_c(t_arg *arg, char c);
+char			*get_abs_base(t_arg *arg, int nb);
+char			*get_base(long nb, int base, const char *str_base, t_arg *arg);
 char			*arg_strncpy(t_arg *arg, char *str, int n);
 // A supprimer
-void	*malloc_(size_t);
-void	free_s(char *);
-void	free_arg(t_arg *);
+void *malloc_(size_t);
+void free_s(char *);
+void free_arg(t_arg *);
 void trace(char *fmt, int i);
 
 // A supprimer

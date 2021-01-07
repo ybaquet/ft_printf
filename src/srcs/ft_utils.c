@@ -1,4 +1,3 @@
-#include <unistd.h>
 #include "../ft_printf.h"
 
 void	ft_putchar(char c)
@@ -15,7 +14,6 @@ void	ft_putstr(char *str)
 		i = 0;
 		while (str[i])
 			ft_putchar(str[i++]);
-
 	}
 }
 
@@ -89,6 +87,7 @@ void free_s(char *s)
 	len = (NULL == s) ? 0 : ft_strlen(s) + 1;
 	globalFree += len;
 	trace("Free S %d\n", len);
+	free(s);
 }
 
 void free_arg(t_arg *arg)
@@ -98,6 +97,7 @@ void free_arg(t_arg *arg)
 	len = (NULL == arg) ? 0 : sizeof(t_arg);
 	globalFree += len;
 	trace("Free ARG %d\n", len);
+	free(arg);
 }
 
 #include <stdio.h>

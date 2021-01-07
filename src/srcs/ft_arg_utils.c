@@ -15,18 +15,23 @@ char	*arg_strncpy(t_arg *arg, char *str, int n)
 	while ((pt[l] = *str++) && n--)
 		l++;
 	pt[l] = 0;
-	arg->white = arg->length - l;
+	if (arg->left)
+		arg->after = arg->length - l;
+	else
+		arg->before = arg->length - l;
 	return (pt);
 }
 
-char *get_base(long nb, int base, const char *str_base, int addonlen)
+char *get_base(long nb, int base, const char *str_base, t_arg *arg)
 {
 	char	*value;
 	long	level;
 	int		len;
 
+	if (!arg->precis)
+		return malloc_c(arg, 0);
 	level = base;
-	len = addonlen + 1;
+	len = 1;
 	while(level <= nb && 0 < level)
 	{
 		level *= base;
@@ -35,7 +40,10 @@ char *get_base(long nb, int base, const char *str_base, int addonlen)
 	if (!(value = (char *)malloc_(sizeof(char) * (len + 1))))
 		return NULL;
 	value[len--] = 0;
-	while (len >= addonlen)
+
+	arg->addon = ('p' == arg->conv) ? "0x" : NULL;
+	arg->length  = ('p' == arg->conv) ? arg->length - 2 : arg->length;
+	while (len >= 0)
 	{
 		value[len] = str_base[nb % base];
 		nb = nb / base;
@@ -44,46 +52,36 @@ char *get_base(long nb, int base, const char *str_base, int addonlen)
 	return (value);
 }
 
-char		*get_addon_base(long nb, int base, const char *str_base, char *addon)
+char		*get_abs_base(t_arg *a, int nb)
 {
 	char	*value;
-	int		i;
+	int		l;
 
-	i = 0;
-	value = get_base(nb, base, str_base, ft_strlen((char*)addon));
-	if (addon)
-	while (*addon)
-		value[i++] = *addon++;
-	return (value);
-}
-
-char		*get_abs_base(t_arg *a, va_list ap)
-{
-	int		nb;
-	char	*value;
-//	int		zero;
-
-//	zero = (NULL != a->fmt && '0' == *(a->fmt) && -1 == a->precis) ? 1 : 0;
-	nb = va_arg(ap, int);
 	if (0 > nb)
 	{
-		a->sign = 1;
-		a->length -= 1;
+		a->sign = -1;
 		nb = -nb;
 	}
-	value = get_base(nb, 10, B10, 0);
-	a->precis = (ft_strlen(value) > a->precis) ? 0 : a->precis - ft_strlen(value);
-	a->white = a->length - a->precis - ft_strlen(value);
-	a->zero = (a->haszero) ? a->white : a->precis;
-	a->white = (a->haszero) ? 0 : a->white;
+	a->length = (a->sign) ? a->length - 1 : a->length;
+	value = get_base(nb, 10, B10, a);
+	l = ft_strlen(value);
+	if (-1 < a->precis || a->haszero)
+		a->zero_nb = (-1 < a->precis) ? a->precis - l : a->length - l;
+	a->zero_nb = (0 > a->zero_nb) ? 0 : a->zero_nb;
+	if (a->left)
+		a->after = a->length - a->zero_nb - l;
+	else
+		a->before = a->length - a->zero_nb - l;
 	return (value);
 }
 
-void	malloc_c(t_arg *arg, char c)
+char	*malloc_c(t_arg *arg, char c)
 {
-	if ((arg->wvar = (char *)malloc_(sizeof(char)*2)))
+	if ((arg->wvar = (char *)malloc_(sizeof(char)* (c) ? 2 : 1)))
 	{
-		arg->wvar[0] = c;
-		arg->wvar[1] = 0;
+		if (c)
+			arg->wvar[0] = c;
+		arg->wvar[(c) ? 1 : 0] = 0;
 	}
+	return (arg->wvar);
 }
