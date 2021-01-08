@@ -1,62 +1,133 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yde-mont <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/01/07 14:43:03 by yde-mont          #+#    #+#             */
+/*   Updated: 2021/01/07 14:43:08 by yde-mont         ###   ########lyon.fr   */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
-int globalMalloc = 0;
-int globalFree = 0;
+void	free_arg(t_arg *arg)
+{
+	free(arg->wvar);
+	free(arg->str);
+	free(arg->fmt);
+	free(arg);
+}
 
-
-int print_args(t_arg *farg, int status)
+int		print_args(t_arg *farg)
 {
 	t_arg	*warg;
 	t_arg	*parg;
+	int		result;
 
 	warg = farg;
+	result = 0;
 	while (warg)
 	{
 		parg = warg;
-		ft_putstr(warg->str);
+		result += ft_putstr(warg->str);
 		while ((warg->before)-- > 0)
-			ft_putchar(' ');
+			result += ft_putchar(' ');
 		if (warg->sign)
-			ft_putchar((-1 == warg->sign) ? '-' : '+');
-		ft_putstr(warg->addon);
+			result += ft_putchar((-1 == warg->sign) ? '-' : '+');
+		result += ft_putstr(warg->addon);
 		while ((warg->zero_nb)-- > 0)
-			ft_putchar('0');
-		ft_putstr(warg->wvar);
+			result += ft_putchar('0');
+		result += ft_putstr(warg->wvar);
 		if ('c' == warg->conv && warg->wvar && !*(warg->wvar))
-			write(1, warg->wvar, 1);
+			result += ft_putchar(*(warg->wvar));
 		while ((warg->after)-- > 0)
-			ft_putchar(' ');
+			result += ft_putchar(' ');
 		warg = warg->next;
-		free_s(parg->wvar);
-		free_s(parg->str);
-		free_s(parg->fmt);
 		free_arg(parg);
 	}
-	return (status);
+	return (result);
 }
 
-int ft_printf(const char *fmt, ...)
+void	get_conv(va_list ap, const char *fmt, int *start, t_arg *arg)
 {
-	va_list ap;
-	int start;
-	int pos;
-	int status;
-	t_arg *farg;
+	int i;
+
+	arg->length = 0;
+	arg->fmt = NULL;
+	i = 0;
+	fmt = fmt + *start;
+	if (*fmt)
+	{
+		fmt++;
+		while (*fmt && 'c' != *fmt && 's' != *fmt && 'p' != *fmt && 'd' != *fmt
+				&& 'i' != *fmt && 'u' != *fmt && 'x' != *fmt && 'X' != *fmt
+				&& '%' != *fmt)
+		{
+			fmt++;
+			i++;
+		}
+		arg->fmt = arg_substr(arg, fmt - i, 0, i);
+		set_attr(arg, ap, arg->fmt);
+		arg->addon = ('p' == arg->conv) ? "0x" : NULL;
+		arg->length = ('p' == arg->conv) ? arg->length - 2 : arg->length;
+	}
+	*start = *start + i;
+	arg->conv = *fmt;
+}
+
+t_arg	*add_arg(const char *fmt, int *start, int pos, va_list ap)
+{
+	t_arg *warg;
+
+	if (!(warg = (t_arg*)malloc(sizeof(t_arg))))
+		return (NULL);
+	if (!(warg->str = arg_substr(warg, fmt, *start, pos)))
+		return (NULL);
+	warg->wvar = NULL;
+	*start += pos;
+	warg->addon = NULL;
+	warg->hasprecis = 0;
+	warg->before = 0;
+	warg->after = 0;
+	warg->zero_nb = 0;
+	warg->next = 0;
+	warg->sign = 0;
+	warg->right = 0;
+	warg->haszero = 0;
+	warg->status = SUCCESS;
+	get_conv(ap, fmt, start, warg);
+	if (fmt[*start])
+		*start = *start + 2;
+	last_proc_arg(warg, ap);
+	return ((SUCCESS == warg->status) ? warg : NULL);
+}
+
+int		ft_printf(const char *fmt, ...)
+{
+	va_list	ap;
+	int		start;
+	int		pos;
+	t_arg	*farg;
+	t_arg	*warg;
 
 	start = 0;
 	pos = 0;
 	farg = NULL;
-	status = OK;
 	va_start(ap, fmt);
-	while (OK == status)
+	while (start != ft_strlen((char*)fmt))
 	{
 		if ('%' == fmt[start + pos] || !fmt[start + pos])
 		{
-			status = add_arg(&farg, fmt, &start, pos, ap);
+			warg = add_arg(fmt, &start, pos, ap);
+			if (!warg)
+				return (ERROR);
+			ft_lstadd_back(&farg, warg);
 			pos = -1;
 		}
 		pos++;
 	}
 	va_end(ap);
-	return (print_args(farg, status));
+	return (print_args(farg));
 }

@@ -50,6 +50,15 @@ void xprint(char *fmt, long u)
 	   printf("\n");
 }
 
+void cprint(char *fmt, char c)
+{
+	   printf(fmt, c);
+	   printf("\n");
+	   fflush(stdout);
+	ft_printf(fmt, c);
+	   printf("\n");
+}
+
 void iprint2(char *fmt, int i1, int i2)
 {
 	   printf(fmt, i1, i2);
@@ -59,11 +68,21 @@ void iprint2(char *fmt, int i1, int i2)
 	   printf("\n");
 }
 
-int main(void)
+int main_init(void)
 {
+	   printf("<%d>\n", -2147483647);
+	ft_printf("<%d>\n", -2147483648);
 
-	xprint("%x", 4294u);
-	xprint("%x", 4294967294u);
+	cprint("%-10c", '0');
+	cprint("%c", '0');
+	cprint("<%-2c>", '0');
+
+	   printf("<%*c>\n", -2, '0');
+	ft_printf("<%*c>\n", -2, '0');
+
+	while(1);
+//	xprint("%x", 4294u);
+//	xprint("%x", 4294967294u);
 //	   printf("<%05%>\n");
 //	ft_printf("<%05%>\n");
 //	   printf("<%5c>\n", 52);

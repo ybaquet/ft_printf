@@ -1,4 +1,35 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_arg_utils.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yde-mont <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/01/07 15:05:15 by yde-mont          #+#    #+#             */
+/*   Updated: 2021/01/07 15:05:16 by yde-mont         ###   ########lyon.fr   */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../ft_printf.h"
+
+char	*arg_substr(t_arg *arg, const char *s, int start, int len)
+{
+	char	*pt;
+	int		i;
+
+	i = 0;
+	if (!(pt = malloc((len + 1) * sizeof(char))))
+	{
+		arg->status = ERROR;
+		return (NULL);
+	}
+	while (start--)
+		s++;
+	while (len-- && *s)
+		pt[i++] = *s++;
+	pt[i] = 0;
+	return (pt);
+}
 
 char	*arg_strncpy(t_arg *arg, char *str, int n)
 {
@@ -10,49 +41,66 @@ char	*arg_strncpy(t_arg *arg, char *str, int n)
 		str = "(null)";
 	if (0 > n)
 		n = ft_strlen(str);
-	if (!(pt = malloc_((n + 1) * sizeof(char))))
+	if (!(pt = malloc((n + 1) * sizeof(char))))
 		return (NULL);
 	while ((pt[l] = *str++) && n--)
 		l++;
 	pt[l] = 0;
-	if (arg->left)
+	if (arg->right)
 		arg->after = arg->length - l;
 	else
 		arg->before = arg->length - l;
 	return (pt);
 }
 
-char *get_base(long nb, int base, const char *str_base, t_arg *arg)
+char	*get_base(long nb, int base, const char *str_base, t_arg *arg)
 {
-	char	*value;
-	long	level;
+	char			*value;
+	unsigned long 	level;
+	unsigned long	ul;
 	int		len;
 
-	if (!arg->precis)
-		return malloc_c(arg, 0);
+//	if (!arg->hasprecis && 0 == nb)
+//		return (malloc_c(arg, 0));
 	level = base;
 	len = 1;
-	while(level <= nb && 0 < level)
+	ul = (unsigned long) nb;
+	while (level <= ul && 0 < level)
+		level = (len++) ? base * level : base * level;
+	if (!(value = (char *)malloc(sizeof(char) * (len + 1))))
 	{
-		level *= base;
-		len++;
+		arg->status = ERROR;
+		return (NULL);
 	}
-	if (!(value = (char *)malloc_(sizeof(char) * (len + 1))))
-		return NULL;
 	value[len--] = 0;
-
 	arg->addon = ('p' == arg->conv) ? "0x" : NULL;
-	arg->length  = ('p' == arg->conv) ? arg->length - 2 : arg->length;
+	arg->length = ('p' == arg->conv) ? arg->length - 2 : arg->length;
 	while (len >= 0)
 	{
-		value[len] = str_base[nb % base];
-		nb = nb / base;
-		len--;
+		value[len--] = str_base[ul % base];
+		ul = ul / base;
 	}
 	return (value);
 }
 
-char		*get_abs_base(t_arg *a, int nb)
+char	*get_trunc_base(long nb, int base, const char *str_base, t_arg *arg)
+{
+	char	*value;
+	char	*tvalue;
+	int		len;
+
+	value = get_base(nb, base, str_base, arg);
+	len = ft_strlen(value);
+	if (len > 8)
+	{
+		tvalue = arg_substr(arg, value, len - 8, 8);
+		free(value);
+		return (tvalue);
+	}
+	return (value);
+}
+
+char	*get_abs_base(t_arg *a, long nb)
 {
 	char	*value;
 	int		l;
@@ -65,10 +113,10 @@ char		*get_abs_base(t_arg *a, int nb)
 	a->length = (a->sign) ? a->length - 1 : a->length;
 	value = get_base(nb, 10, B10, a);
 	l = ft_strlen(value);
-	if (-1 < a->precis || a->haszero)
-		a->zero_nb = (-1 < a->precis) ? a->precis - l : a->length - l;
+	if (a->hasprecis || a->haszero)
+		a->zero_nb = (a->hasprecis) ? a->precis - l : a->length - l;
 	a->zero_nb = (0 > a->zero_nb) ? 0 : a->zero_nb;
-	if (a->left)
+	if (a->right)
 		a->after = a->length - a->zero_nb - l;
 	else
 		a->before = a->length - a->zero_nb - l;
@@ -77,7 +125,7 @@ char		*get_abs_base(t_arg *a, int nb)
 
 char	*malloc_c(t_arg *arg, char c)
 {
-	if ((arg->wvar = (char *)malloc_(sizeof(char)* (c) ? 2 : 1)))
+	if ((arg->wvar = (char *)malloc(sizeof(char) * (c) ? 2 : 1)))
 	{
 		if (c)
 			arg->wvar[0] = c;

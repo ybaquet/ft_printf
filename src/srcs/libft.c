@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   libft.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yde-mont <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/01/07 14:43:49 by yde-mont          #+#    #+#             */
+/*   Updated: 2021/01/07 14:43:51 by yde-mont         ###   ########lyon.fr   */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../ft_printf.h"
 
 int		ft_atoi(const char *str)
@@ -19,22 +31,6 @@ int		ft_atoi(const char *str)
 	while (*str >= '0' && *str <= '9')
 		result = result * 10 + *str++ - 48;
 	return (result * sign);
-}
-
-char	*ft_substr(const char *s, int start, int len)
-{
-	char	*pt;
-	int		i;
-
-	i = 0;
-	if (!(pt = malloc_((len + 1) * sizeof(char))))
-		return (NULL);
-	while (start--)
-		s++;
-	while (len-- && *s)
-		pt[i++] = *s++;
-	pt[i] = 0;
-	return (pt);
 }
 
 int		index_of(char *s, char c)

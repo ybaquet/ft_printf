@@ -8,9 +8,6 @@ SRCS		= ft_printf.c \
 
 OBJS		= ${SRCS:.c=.o}
 
-#%.o : %.c	ft_printf.h
-#			$(CC) -c $<
-
 CC			= gcc $(CFLAGS)
 
 CFLAGS		= -Wall -Wextra -Werror
