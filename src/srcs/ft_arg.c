@@ -29,16 +29,19 @@ int		get_attr_value(char *s, va_list ap, int to_free)
 
 void	reevaluate_attr(t_arg *arg)
 {
-//	if (arg->hasprecis && arg->precis < 0)
-//		arg->hasprecis = 0;
-//	if (arg->length < 0)
-//	{
-//		arg->length = -(arg->length);
-//		arg->right = 1;
+	if (arg->hasprecis && arg->precis < 0)
+	{
+		arg->hasprecis = 0;
+		arg->haszero = 0;
+	}
+	if (arg->width < 0)
+	{
+		arg->width = - (arg->width);
+		arg->right = 1;
+		arg->haszero = 0;
 //		arg->precis = (!arg->hasprecis) ? 0 : arg->precis;
 //		arg->hasprecis = 1;
-//	}
-	arg = NULL;
+	}
 }
 
 void	set_attr(t_arg *arg, va_list ap, char *pt)
@@ -46,11 +49,11 @@ void	set_attr(t_arg *arg, va_list ap, char *pt)
 	int		pos;
 	char	*wstr;
 
-	while (pt && (*pt == '-' || *pt == '0' || *pt == '+'))
+	while (pt && (*pt == '-' || *pt == '0' || *pt == ' '))
 	{
 		if ('0' == *pt)
 			arg->haszero = 1;
-		else if ('+' == *pt)
+		else if (' ' == *pt)
 			arg->sign = 1;
 		else
 			arg->right = 1;
@@ -59,14 +62,17 @@ void	set_attr(t_arg *arg, va_list ap, char *pt)
 	arg->haszero = (arg->right) ? 0 : arg->haszero;
 	pos = index_of(pt, '.');
 	if (-1 == pos)
-		arg->length = get_attr_value(pt, ap, 0);
+	{
+		arg->width = get_attr_value(pt, ap, 0);
+		arg->hasprecis = 0;
+	}
 	else
 	{
-		arg->hasprecis = 1;
 		wstr = arg_substr(arg, pt, 0, pos);
-		arg->length = get_attr_value(wstr, ap, 1);
+		arg->width = get_attr_value(wstr, ap, 1);
 		wstr = arg_substr(arg, pt, pos + 1, ft_strlen(pt) - pos + 1);
 		arg->precis = get_attr_value(wstr, ap, 1);
+		arg->hasprecis = 1;
 	}
 	reevaluate_attr(arg);
 }
@@ -76,25 +82,28 @@ void	compute_padd(t_arg *a)
 	int l;
 
 	l = ft_strlen(a->wvar);
-	if ('s' != a->conv && 'c' != a->conv && ('%' != a->conv || !a->right))
+	if (a->conv && 's' != a->conv && 'c' != a->conv && ('%' != a->conv || !a->right))
 	{
 		if (a->hasprecis || a->haszero)
-			a->zero_nb = (-1 < a->precis) ? a->precis - l : a->length - l;
-		a->zero_nb = (0 > a->zero_nb) ? 0 : a->zero_nb;
+		{
+			a->zero_nb = (a->hasprecis) ? a->precis - l : a->width - l;
+			a->zero_nb = (0 > a->zero_nb) ? 0 : a->zero_nb;
+			a->haszero = 1;
+		}
 	}
 	if ('c' == a->conv && a->wvar && !*(a->wvar))
-		a->length -= 1;
+		a->width -= 1;
 	if (a->right)
-		a->after = a->length - a->zero_nb - l;
+		a->after = a->width - a->zero_nb - l;
 	else
-		a->before = a->length - a->zero_nb - l;
+		a->before = a->width - a->zero_nb - l;
 }
 
 void	last_proc_arg(t_arg *arg, va_list ap)
 {
-	if (0 > arg->length)
+	if (0 > arg->width)
 	{
-		arg->length = -(arg->length);
+		arg->width = -(arg->width);
 		arg->right = 1;
 	}
 	arg->wvar = NULL;

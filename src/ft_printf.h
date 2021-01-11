@@ -35,7 +35,7 @@ typedef struct	s_arg
 	char			*str;
 	int				hasprecis;
 	int				precis;
-	int				length;
+	int				width;
 	char			*fmt;
 	int				haszero;
 	int				zero_nb;

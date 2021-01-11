@@ -35,13 +35,18 @@ int		print_args(t_arg *farg)
 		while ((warg->before)-- > 0)
 			result += ft_putchar(' ');
 		if (warg->sign)
-			result += ft_putchar((-1 == warg->sign) ? '-' : '+');
+			result += ft_putchar((-1 == warg->sign) ? '-' : ' ');
 		result += ft_putstr(warg->addon);
-		while ((warg->zero_nb)-- > 0)
+//		if (warg->zero_nb>10)
+//		{
+//			printf("<%d, %d>.\n", warg->zero_nb, warg->haszero);
+//			warg->zero_nb=10;
+//		}
+		while (warg->haszero && (warg->zero_nb)-- > 0)
 			result += ft_putchar('0');
 		result += ft_putstr(warg->wvar);
 		if ('c' == warg->conv && warg->wvar && !*(warg->wvar))
-			result += ft_putchar(*(warg->wvar));
+			result += ft_putchar(0);
 		while ((warg->after)-- > 0)
 			result += ft_putchar(' ');
 		warg = warg->next;
@@ -54,7 +59,7 @@ void	get_conv(va_list ap, const char *fmt, int *start, t_arg *arg)
 {
 	int i;
 
-	arg->length = 0;
+	arg->width = 0;
 	arg->fmt = NULL;
 	i = 0;
 	fmt = fmt + *start;
@@ -71,7 +76,7 @@ void	get_conv(va_list ap, const char *fmt, int *start, t_arg *arg)
 		arg->fmt = arg_substr(arg, fmt - i, 0, i);
 		set_attr(arg, ap, arg->fmt);
 		arg->addon = ('p' == arg->conv) ? "0x" : NULL;
-		arg->length = ('p' == arg->conv) ? arg->length - 2 : arg->length;
+		arg->width = ('p' == arg->conv) ? arg->width - 2 : arg->width;
 	}
 	*start = *start + i;
 	arg->conv = *fmt;
@@ -88,7 +93,6 @@ t_arg	*add_arg(const char *fmt, int *start, int pos, va_list ap)
 	warg->wvar = NULL;
 	*start += pos;
 	warg->addon = NULL;
-	warg->hasprecis = 0;
 	warg->before = 0;
 	warg->after = 0;
 	warg->zero_nb = 0;

@@ -39,7 +39,7 @@ char	*arg_strncpy(t_arg *arg, char *str, int n)
 	l = 0;
 	if (!str)
 		str = "(null)";
-	if (0 > n)
+	if (0 > n || !(arg->hasprecis))
 		n = ft_strlen(str);
 	if (!(pt = malloc((n + 1) * sizeof(char))))
 		return (NULL);
@@ -47,9 +47,9 @@ char	*arg_strncpy(t_arg *arg, char *str, int n)
 		l++;
 	pt[l] = 0;
 	if (arg->right)
-		arg->after = arg->length - l;
+		arg->after = arg->width - l;
 	else
-		arg->before = arg->length - l;
+		arg->before = arg->width - l;
 	return (pt);
 }
 
@@ -60,8 +60,8 @@ char	*get_base(long nb, int base, const char *str_base, t_arg *arg)
 	unsigned long	ul;
 	int		len;
 
-//	if (!arg->hasprecis && 0 == nb)
-//		return (malloc_c(arg, 0));
+	if (arg->hasprecis && 0 == nb)
+		return (malloc_c(arg, 0));
 	level = base;
 	len = 1;
 	ul = (unsigned long) nb;
@@ -74,7 +74,7 @@ char	*get_base(long nb, int base, const char *str_base, t_arg *arg)
 	}
 	value[len--] = 0;
 	arg->addon = ('p' == arg->conv) ? "0x" : NULL;
-	arg->length = ('p' == arg->conv) ? arg->length - 2 : arg->length;
+	arg->width = ('p' == arg->conv) ? arg->width - 2 : arg->width;
 	while (len >= 0)
 	{
 		value[len--] = str_base[ul % base];
@@ -110,16 +110,16 @@ char	*get_abs_base(t_arg *a, long nb)
 		a->sign = -1;
 		nb = -nb;
 	}
-	a->length = (a->sign) ? a->length - 1 : a->length;
+	a->width = (a->sign) ? a->width - 1 : a->width;
 	value = get_base(nb, 10, B10, a);
 	l = ft_strlen(value);
 	if (a->hasprecis || a->haszero)
-		a->zero_nb = (a->hasprecis) ? a->precis - l : a->length - l;
+		a->zero_nb = (a->hasprecis) ? a->precis - l : a->width - l;
 	a->zero_nb = (0 > a->zero_nb) ? 0 : a->zero_nb;
 	if (a->right)
-		a->after = a->length - a->zero_nb - l;
+		a->after = a->width - a->zero_nb - l;
 	else
-		a->before = a->length - a->zero_nb - l;
+		a->before = a->width - a->zero_nb - l;
 	return (value);
 }
 
