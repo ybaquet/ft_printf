@@ -1,27 +1,53 @@
-NAME		= libftprintf.a
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    liv_ft_printf.sh                                   :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: yde-mont <marvin@42.fr>                    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2021/01/12 10:36:47 by yde-mont          #+#    #+#              #
+#    Updated: 2021/01/12 10:36:58 by yde-mont         ###   ########lyon.fr    #
+#                                                                              #
+# **************************************************************************** #
 
-SRCS		= ft_printf.c \
-				srcs/ft_arg_utils.c \
-				srcs/ft_arg.c \
-				srcs/ft_utils.c \
-				srcs/libft.c
+NAME = libftprintf.a
 
-OBJS		= ${SRCS:.c=.o}
+FLAGS = -Wall -Wextra -Werror -O2
 
-CC			= gcc $(CFLAGS)
+DIR_S = srcs
 
-CFLAGS		= -Wall -Wextra -Werror
+DIR_O = obj
 
-AR			= ar -rcs
+HEADER = includes
 
-all :		$(NAME)
+SOURCES = ft_printf.c \
+  			ft_arg_utils.c \
+			ft_arg.c \
+			ft_utils.c \
+			libft.c
 
-$(NAME) :	$(OBJS)
-			$(AR) $@ $(OBJS)
-clean :
+SRCS = $(addprefix $(DIR_S)/,$(SOURCES))
+
+OBJS = $(addprefix $(DIR_O)/,$(SOURCES:.c=.o))
+
+all: $(NAME)
+
+$(NAME): $(OBJS)
+	ar rc $(NAME) $(OBJS)
+	ranlib $(NAME)
+
+$(DIR_O)/%.o: $(DIR_S)/%.c $(HEADER)/ft_printf.h
+	mkdir -p obj
+	$(CC) $(FLAGS) -I $(HEADER) -o $@ -c $<
+
+
+clean:
 	rm -f $(OBJS)
+	rm -rf $(DIR_O)
 
-fclean : clean
+fclean: clean
 	rm -f $(NAME)
 
-re : fclean all
+re: fclean all
+
+.PHONY: fclean re norme all clean

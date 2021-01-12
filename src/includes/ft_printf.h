@@ -59,8 +59,9 @@ int				ft_strlen(char *s);
 void			ft_lstadd_back(t_arg **arg_list, t_arg *new_arg);
 char			*malloc_c(t_arg *arg, char c);
 char			*get_abs_base(t_arg *arg, long nb);
-char			*get_trunc_base(int, int base, const char *str_base, t_arg *arg);
+char			*get_trunc_base(int nb, int base, const char *str_b, t_arg *a);
 char			*get_base(long nb, int base, const char *str_base, t_arg *arg);
 char			*arg_strncpy(t_arg *arg, char *str, int n);
+int				free_error (t_arg *farg);
 
 #endif

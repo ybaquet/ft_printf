@@ -10,25 +10,22 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../ft_printf.h"
+#include "../includes/ft_printf.h"
 
-int		ft_putchar(char c)
+int		free_error(t_arg *farg)
 {
-	write(1, &c, 1);
-	return (1);
-}
+	t_arg *parg;
 
-int		ft_putstr(char *str)
-{
-	int		i;
-
-	i = 0;
-	if (str)
+	while (farg)
 	{
-		while (str[i])
-			ft_putchar(str[i++]);
+		parg = farg;
+		free(farg->wvar);
+		free(farg->str);
+		free(farg->fmt);
+		free(farg);
+		farg = parg->next;
 	}
-	return (i);
+	return (ERROR);
 }
 
 t_arg	*ft_lstlast(t_arg *lst)
@@ -60,4 +57,15 @@ void	ft_lstadd_back(t_arg **alst, t_arg *new)
 		else
 			*alst = new;
 	}
+}
+
+char	*malloc_c(t_arg *arg, char c)
+{
+	if ((arg->wvar = (char *)malloc(sizeof(char) * (c) ? 2 : 1)))
+	{
+		if (c)
+			arg->wvar[0] = c;
+		arg->wvar[(c) ? 1 : 0] = 0;
+	}
+	return (arg->wvar);
 }

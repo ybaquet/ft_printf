@@ -10,43 +10,42 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "../includes/ft_printf.h"
 
-void	free_arg(t_arg *arg)
+t_arg	*print_arg(t_arg *warg, int *result)
 {
-	free(arg->wvar);
-	free(arg->str);
-	free(arg->fmt);
-	free(arg);
+	t_arg *narg;
+
+	*result += ft_putstr(warg->str);
+	while ((warg->before)-- > 0)
+		*result += ft_putchar(' ');
+	if (warg->sign)
+		*result += ft_putchar((-1 == warg->sign) ? '-' : ' ');
+	*result += ft_putstr(warg->addon);
+	while (warg->haszero && (warg->zero_nb)-- > 0)
+		*result += ft_putchar('0');
+	*result += ft_putstr(warg->wvar);
+	if ('c' == warg->conv && warg->wvar && !*(warg->wvar))
+		*result += ft_putchar(0);
+	while ((warg->after)-- > 0)
+		*result += ft_putchar(' ');
+	narg = warg->next;
+	free(warg->wvar);
+	free(warg->str);
+	free(warg->fmt);
+	free(warg);
+	return (narg);
 }
 
 int		print_args(t_arg *farg)
 {
 	t_arg	*warg;
-	t_arg	*parg;
 	int		result;
 
 	warg = farg;
 	result = 0;
 	while (warg)
-	{
-		parg = warg;
-		result += ft_putstr(warg->str);
-		while ((warg->before)-- > 0)
-			result += ft_putchar(' ');
-		if (warg->sign)
-			result += ft_putchar((-1 == warg->sign) ? '-' : ' ');
-		result += ft_putstr(warg->addon);
-		while (warg->haszero && (warg->zero_nb)-- > 0)
-			result += ft_putchar('0');
-		result += ft_putstr(warg->wvar);
-		if ('c' == warg->conv && warg->wvar && !*(warg->wvar))
-			result += ft_putchar(0);
-		while ((warg->after)-- > 0)
-			result += ft_putchar(' ');
-		warg = warg->next;
-		free_arg(parg);
-	}
+		warg = print_arg(warg, &result);
 	return (result);
 }
 
@@ -56,6 +55,7 @@ void	get_conv(va_list ap, const char *fmt, int *start, t_arg *arg)
 
 	arg->width = 0;
 	arg->fmt = NULL;
+	arg->wvar = NULL;
 	i = 0;
 	fmt = fmt + *start;
 	if (*fmt)
@@ -122,8 +122,8 @@ int		ft_printf(const char *fmt, ...)
 		if ('%' == fmt[start + pos] || !fmt[start + pos])
 		{
 			warg = add_arg(fmt, &start, pos, ap);
-			if (!warg)
-				return (ERROR);
+			if (!warg || ERROR == warg->status)
+				return (free_error(farg));
 			ft_lstadd_back(&farg, warg);
 			pos = -1;
 		}

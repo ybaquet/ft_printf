@@ -10,38 +10,45 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../ft_printf.h"
+#include "../includes/ft_printf.h"
 
-int		get_attr_value(char *s, va_list ap, int to_free)
+int		get_attr_value(char *s, va_list ap)
 {
 	int		value;
 
 	if (!s || !*s)
-	{
-		if (to_free)
-			free(s);
 		return (0);
-	}
 	else if ('*' == s[0])
-	{
-		if (to_free)
-			free(s);
 		return (va_arg(ap, int));
-	}
 	else
 		value = ft_atoi(s);
-	if (to_free)
-		free(s);
 	return (value);
 }
 
-void	reevaluate_attr(t_arg *arg)
+void	reevaluate_attr(t_arg *arg, int pos, va_list ap, char *pt)
 {
+	char	*wstr;
+
+	if (-1 == pos)
+	{
+		arg->width = get_attr_value(pt, ap);
+		arg->hasprecis = 0;
+	}
+	else
+	{
+		arg->hasprecis = 1;
+		wstr = arg_substr(arg, pt, 0, pos);
+		arg->width = get_attr_value(wstr, ap);
+		free(wstr);
+		wstr = arg_substr(arg, pt, pos + 1, ft_strlen(pt) - pos + 1);
+		arg->precis = get_attr_value(wstr, ap);
+		free(wstr);
+	}
 	if (arg->hasprecis && arg->precis < 0)
 		arg->hasprecis = 0;
 	if (arg->width < 0)
 	{
-		arg->width = - (arg->width);
+		arg->width = -(arg->width);
 		arg->right = 1;
 		arg->haszero = 0;
 	}
@@ -50,7 +57,6 @@ void	reevaluate_attr(t_arg *arg)
 void	set_attr(t_arg *arg, va_list ap, char *pt)
 {
 	int		pos;
-	char	*wstr;
 
 	while (pt && (*pt == '-' || *pt == '0' || *pt == ' '))
 	{
@@ -64,20 +70,7 @@ void	set_attr(t_arg *arg, va_list ap, char *pt)
 	}
 	arg->haszero = (arg->right) ? 0 : arg->haszero;
 	pos = index_of(pt, '.');
-	if (-1 == pos)
-	{
-		arg->width = get_attr_value(pt, ap, 0);
-		arg->hasprecis = 0;
-	}
-	else
-	{
-		wstr = arg_substr(arg, pt, 0, pos);
-		arg->width = get_attr_value(wstr, ap, 1);
-		wstr = arg_substr(arg, pt, pos + 1, ft_strlen(pt) - pos + 1);
-		arg->precis = get_attr_value(wstr, ap, 1);
-		arg->hasprecis = 1;
-	}
-	reevaluate_attr(arg);
+	reevaluate_attr(arg, pos, ap, pt);
 }
 
 void	compute_padd(t_arg *a)
@@ -85,7 +78,8 @@ void	compute_padd(t_arg *a)
 	int l;
 
 	l = ft_strlen(a->wvar);
-	if (a->conv && 's' != a->conv && 'c' != a->conv && ('%' != a->conv || !a->right))
+	if (a->conv && 's' != a->conv && 'c' != a->conv &&
+			('%' != a->conv || !a->right))
 	{
 		if (a->hasprecis || a->haszero)
 		{
@@ -119,7 +113,7 @@ void	last_proc_arg(t_arg *arg, va_list ap)
 	else if ('u' == arg->conv)
 		arg->wvar = get_base(va_arg(ap, unsigned int), 10, B10, arg);
 	else if ('p' == arg->conv)
-		arg->wvar = get_base((unsigned long) va_arg(ap, long), 16, B16l, arg);
+		arg->wvar = get_base((unsigned long)va_arg(ap, long), 16, B16l, arg);
 	else if ('X' == arg->conv)
 		arg->wvar = get_trunc_base(va_arg(ap, int), 16, B16U, arg);
 	else if ('x' == arg->conv)
