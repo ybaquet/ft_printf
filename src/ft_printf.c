@@ -37,11 +37,6 @@ int		print_args(t_arg *farg)
 		if (warg->sign)
 			result += ft_putchar((-1 == warg->sign) ? '-' : ' ');
 		result += ft_putstr(warg->addon);
-//		if (warg->zero_nb>10)
-//		{
-//			printf("<%d, %d>.\n", warg->zero_nb, warg->haszero);
-//			warg->zero_nb=10;
-//		}
 		while (warg->haszero && (warg->zero_nb)-- > 0)
 			result += ft_putchar('0');
 		result += ft_putstr(warg->wvar);
@@ -100,6 +95,8 @@ t_arg	*add_arg(const char *fmt, int *start, int pos, va_list ap)
 	warg->sign = 0;
 	warg->right = 0;
 	warg->haszero = 0;
+	warg->hasprecis = 0;
+	warg->precis = 0;
 	warg->status = SUCCESS;
 	get_conv(ap, fmt, start, warg);
 	if (fmt[*start])

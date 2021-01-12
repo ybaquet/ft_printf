@@ -17,9 +17,17 @@ int		get_attr_value(char *s, va_list ap, int to_free)
 	int		value;
 
 	if (!s || !*s)
+	{
+		if (to_free)
+			free(s);
 		return (0);
+	}
 	else if ('*' == s[0])
+	{
+		if (to_free)
+			free(s);
 		return (va_arg(ap, int));
+	}
 	else
 		value = ft_atoi(s);
 	if (to_free)
@@ -30,17 +38,12 @@ int		get_attr_value(char *s, va_list ap, int to_free)
 void	reevaluate_attr(t_arg *arg)
 {
 	if (arg->hasprecis && arg->precis < 0)
-	{
 		arg->hasprecis = 0;
-		arg->haszero = 0;
-	}
 	if (arg->width < 0)
 	{
 		arg->width = - (arg->width);
 		arg->right = 1;
 		arg->haszero = 0;
-//		arg->precis = (!arg->hasprecis) ? 0 : arg->precis;
-//		arg->hasprecis = 1;
 	}
 }
 
@@ -118,8 +121,8 @@ void	last_proc_arg(t_arg *arg, va_list ap)
 	else if ('p' == arg->conv)
 		arg->wvar = get_base((unsigned long) va_arg(ap, long), 16, B16l, arg);
 	else if ('X' == arg->conv)
-		arg->wvar = get_trunc_base(va_arg(ap, long), 16, B16U, arg);
+		arg->wvar = get_trunc_base(va_arg(ap, int), 16, B16U, arg);
 	else if ('x' == arg->conv)
-		arg->wvar = get_trunc_base(va_arg(ap, long), 16, B16l, arg);
+		arg->wvar = get_trunc_base(va_arg(ap, int), 16, B16l, arg);
 	compute_padd(arg);
 }

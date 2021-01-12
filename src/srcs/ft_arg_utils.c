@@ -83,7 +83,7 @@ char	*get_base(long nb, int base, const char *str_base, t_arg *arg)
 	return (value);
 }
 
-char	*get_trunc_base(long nb, int base, const char *str_base, t_arg *arg)
+char	*get_trunc_base(int nb, int base, const char *str_base, t_arg *arg)
 {
 	char	*value;
 	char	*tvalue;
